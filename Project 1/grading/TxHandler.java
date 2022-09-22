@@ -41,17 +41,17 @@ public class TxHandler {
       //(1) all outputs claimed by tx are in the current UTXO pool
       if (utxoPool.contains(utxo) == false) return false;
 
+      //(2) the signatures on each input of tx are valid
+      if (output.address.verifySignature(tx.getRawDataToSign(i), input.signature) == false) return false;
+    
       //(3) no UTXO is claimed multiple times by tx
       if (current_utxo_pool.contains(utxo)) {
         return false;
       } else {
         current_utxo_pool.add(utxo);
       }
-
-      //(2) the signatures on each input of tx are valid
-      if (output.address.verifySignature(tx.getRawDataToSign(i), input.signature) == false) return false;
-      
-      //Get Sum of inputs
+  
+      //(5) Get Sum of inputs
       inputSum += utxoPool.getTxOutput(utxo).value;
     }
     
@@ -63,7 +63,7 @@ public class TxHandler {
       if (output.value < 0) {
         return false;
       } else {
-        //Get sum of outputs
+        //(5) Get sum of outputs
         outputSum += output.value;
       }
     }
